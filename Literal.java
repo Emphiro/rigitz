@@ -6,7 +6,7 @@ import java.util.List;
 public class Literal extends Tree{
     private static Tree epsilon;
     private static Tree empty;
-    private static TreeType type = TreeType.literal;
+    private TreeType type = TreeType.literal;
     private String lit;
     private Literal(String lit){
         this.lit = lit;
@@ -77,5 +77,10 @@ public class Literal extends Tree{
     @Override
     public String toString() {
         return lit;
+    }
+
+    @Override
+    public TreeType getType(){
+        return this.type;
     }
 }

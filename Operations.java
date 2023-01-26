@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Operations extends Tree{
-    private TreeType type = TreeType.union;
-    private String opStr;
     protected List<Tree> children = new ArrayList<>();
 
 
@@ -23,10 +21,7 @@ public abstract class Operations extends Tree{
     }
 
 
-
-
-    @Override
-    public String toString() {
+    public String toString(String opStr) {
         if(isEmpty())
             return Tree.emptyStr;
         StringBuilder sb = new StringBuilder("(");

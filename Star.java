@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Star extends Tree {
-    private static final TreeType type = TreeType.star;
     private Tree child;
     private Star(Tree tree){
         this.child = tree;
@@ -37,5 +36,10 @@ public class Star extends Tree {
     @Override
     public String toString() {
         return child.toString() + Tree.starStr;
+    }
+
+    @Override
+    public TreeType getType(){
+        return TreeType.star;
     }
 }

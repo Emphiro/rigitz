@@ -11,7 +11,6 @@ public abstract class Tree {
     static final String epsilonStr = "e";
     static final String emptyStr = "";
     static final String indentation = "  ";
-    private static TreeType type;
 
     public abstract List<Tree> getChildren();
 
@@ -49,14 +48,15 @@ public abstract class Tree {
         return getNumChildren() == 0 && getType() != TreeType.literal;
     }
 
-    public TreeType getType(){
-        return type;
-    }
+    public abstract TreeType getType();
     public static List<Tree> filter(Tree[] unfiltered, TreeType... filter){
         List<Tree> filtered = new ArrayList<>();
-        for (Tree tree : unfiltered){
-            if(tree.getType() != type)
-                filtered.add(tree);
+        outer: for (Tree tree : unfiltered){
+            for (TreeType type : filter){
+                if(tree.getType() == type)
+                    continue outer;
+            }
+            filtered.add(tree);
         }
         return filtered;
     }

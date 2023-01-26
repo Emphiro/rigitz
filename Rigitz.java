@@ -54,18 +54,7 @@ public class Rigitz {
         }
         return result;
     }
-    static ArrayList<Tree>[][] toArr(Tree[][][] arr){
-        ArrayList<Tree>[][] result = new ArrayList[arr.length][arr[0].length];
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < arr[i].length; j++) {
-                result[i][j] = new ArrayList<>();
-                for (int k = 0; k < arr[i][j].length; k++) {
-                    result[i][j].add(arr[i][j][k]);
-                }
-            }
-        }
-        return result;
-    }
+
 
 
     public void rigitz(){
@@ -140,7 +129,7 @@ public class Rigitz {
                     System.out.print("  ");
                 }
             }
-            System.out.printf("Used R(%d, %d, %d):\n", k, i, j);
+            System.out.printf("Used R(%d, %d, %d): %s\n", k, i, j, dpArray[k][i-1][j-1]);
         }
         return  dpArray[k][i-1][j-1];
     }

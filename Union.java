@@ -3,7 +3,6 @@ package rigitz;
 import java.util.List;
 
 public class Union extends Operations {
-    private static final TreeType type = TreeType.union;
     private static final String opString = Tree.unionStr;
     private Union(List<Tree> trees){
         this.addChild(trees);
@@ -14,7 +13,7 @@ public class Union extends Operations {
         if (fTrees.isEmpty())
             return Literal.empty();
         if(fTrees.size() == 1)
-            return trees[0];
+            return fTrees.get(0);
         Tree union = new Union(filter(fTrees, TreeType.union));
         List<Tree> unions = filter(trees, inverse(TreeType.union));
         for (int i = 0; i < unions.size(); i++) {
@@ -40,5 +39,13 @@ public class Union extends Operations {
         return this;
     }
 
+    @Override
+    public TreeType getType(){
+        return TreeType.union;
+    }
 
+    @Override
+    public String toString() {
+        return super.toString(opString);
+    }
 }
