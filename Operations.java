@@ -3,26 +3,14 @@ package rigitz;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class MultipleOps extends Tree{
-    private static final TreeType type = TreeType.union;
-    private List<Tree> children = new ArrayList<>();
+public abstract class Operations extends Tree{
+    private TreeType type = TreeType.union;
+    private String opStr;
+    protected List<Tree> children = new ArrayList<>();
 
-    private Union(List<Tree> trees){
-        this.addChild(trees);
-    }
 
-    public static Tree createUnion(Tree ... trees){
-        List<Tree> fTrees = filter(trees, TreeType.empty);
 
-        if (fTrees.isEmpty())
-            return Literal.empty();
-        Union union = new Union(filter(fTrees, TreeType.union));
-        List<Tree> unions = filter(trees, inverse(TreeType.union));
-        for (int i = 0; i < unions.size(); i++) {
-            union.addChild(unions.get(i).getChildren());
-        }
-        return union;
-    }
+
 
     @Override
     public List<Tree> getChildren() {
@@ -36,17 +24,6 @@ public abstract class MultipleOps extends Tree{
 
 
 
-    @Override
-    public void addChild(Tree... trees) {
-        List<Tree> fTrees = filter(trees, TreeType.empty, TreeType.union);
-        for (Tree t : fTrees){
-            children.add(t);
-        }
-        List<Tree> unions = filter(trees, inverse(TreeType.union));
-        for (int i = 0; i < unions.size(); i++) {
-            this.addChild(unions.get(i).getChildren());
-        }
-    }
 
     @Override
     public String toString() {
@@ -55,7 +32,7 @@ public abstract class MultipleOps extends Tree{
         StringBuilder sb = new StringBuilder("(");
         sb.append(children.get(0).toString());
         for(int i = 1; i < getNumChildren(); i++) {
-            sb.append(Tree.unionStr).append(children.get(i).toString());
+            sb.append(opStr).append(children.get(i).toString());
         }
         sb.append(")");
         return sb.toString();

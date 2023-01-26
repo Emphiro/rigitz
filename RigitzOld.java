@@ -2,10 +2,9 @@ package rigitz;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
-public class Rigitz {
+public class RigitzOld {
     static final String union = " U ";
     static final String and = "";
     static final String star = "*";
@@ -27,7 +26,7 @@ public class Rigitz {
     private boolean dp = true;
     private String[][][] dpArray;
 
-    public Rigitz(int states, int start, int[] ends, String[][][] changes) {
+    public RigitzOld(int states, int start, int[] ends, String[][][] changes) {
         this.states = states;
         this.start = start;
         this.ends = ends;
@@ -38,7 +37,7 @@ public class Rigitz {
     }
 
     public static void main(String... args){
-        Rigitz rig = new Rigitz(statesS, startS, endsS, changesS);
+        RigitzOld rig = new RigitzOld(statesS, startS, endsS, changesS);
         rig.rigitz();
     }
 
