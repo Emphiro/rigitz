@@ -49,6 +49,13 @@ public abstract class Tree {
     }
 
     public abstract TreeType getType();
+
+    /**
+     * returns a copy of the unfiltered List without Elements that are of the Types specified in filter
+     * @param unfiltered unfiltered Array
+     * @param filter filtered TreeTypes
+     * @return filtered List
+     */
     public static List<Tree> filter(Tree[] unfiltered, TreeType... filter){
         List<Tree> filtered = new ArrayList<>();
         outer: for (Tree tree : unfiltered){
@@ -60,14 +67,31 @@ public abstract class Tree {
         }
         return filtered;
     }
+
+    /**
+     * returns a copy of the unfiltered List without Elements that are of the Types specified in filter
+     * @param unfiltered unfiltered List
+     * @param filter filtered TreeTypes
+     * @return filtered List
+     */
     public static List<Tree> filter(List<Tree> unfiltered, TreeType... filter){
         return filter(unfiltered.toArray(new Tree[0]), filter);
     }
 
+    /**
+     * Returns an array containing all the TreeTypes not specified in type
+     * @param type Array of Types
+     * @return difference of TreeTypes and type
+     */
     public static TreeType[] inverse(TreeType... type){
         return inverse(Arrays.asList(type));
     }
 
+    /**
+     * Returns an array containing all the TreeTypes not specified in type
+     * @param type List of Types
+     * @return difference of TreeTypes and type
+     */
     public static TreeType[] inverse(List<TreeType> type){
         ArrayList<TreeType> result = new ArrayList<>();
         for (TreeType t : TreeType.values() ){

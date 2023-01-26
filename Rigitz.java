@@ -22,8 +22,10 @@ public class Rigitz {
     private List<String>[][] changes;
     private boolean verbose = true;
     private boolean showDepth = true;
-    private int depth = 0;
     private boolean dp = true;
+    private boolean optimize = true;
+
+    private int depth = 0;
     private Tree[][][] dpArray;
 
 
@@ -92,9 +94,20 @@ public class Rigitz {
                     System.out.print(indentation);
                 }
             }
+            if(optimize){
+                Tree optimizedRigitz = optimize(newRigitz);
+                System.out.printf("R(%d, %d, %d) =  %s -> %s", k, i, j, newRigitz);
+                if(!Tree.equals(optimizedRigitz, newRigitz))
+                    System.out.printf(" -> %s", optimizedRigitz);
+                System.out.println();
+                return optimizedRigitz;
+            }else{
+                System.out.printf("R(%d, %d, %d) =  %s\n", k, i, j, newRigitz);
+            }
 
-            System.out.printf("R(%d, %d, %d) =  %s\n", k, i, j, newRigitz.toString());
         }
+        if(optimize)
+            return optimize(newRigitz);
         return newRigitz;
 
     }
@@ -133,57 +146,26 @@ public class Rigitz {
         }
         return  dpArray[k][i-1][j-1];
     }
-    /*
-    private String star(String string){
-        if(string.length() == 0)
-            return "";
-        return string + star;
-    }
 
-    private String and(List<String> strings){
-        return and(strings.toArray(new String[0]));
-    }
-    private String and(String... strings){
-        String result = "";
-        for (int i = 0; i < strings.length; i++) {
-            if(strings[i].length() <= 0)
-                return "";
-        }
-        if(strings.length == 0)
-            return "";
-        result += strings[0];
-        for (int i = 1; i < strings.length; i++) {
-            result += and + strings[i];
-        }
-        return result;
-    }
+    private Tree optimize(Tree tree){
 
-    private String union(String... strings){
-        return union(Arrays.asList(strings));
-    }
-    private String union(List<String> strings){
-        String result = "";
-        ArrayList<String> filteredString = new ArrayList<>();
-        for (int i = 0; i < strings.size(); i++) {
-            if(strings.get(i).length() > 0){
-                filteredString.add(strings.get(i));
+        if(tree.getType() == TreeType.star){
+            Star star = (Star)tree;
+            // Rule (a U e)* -> a*
+            if(star.getChild().getType() == TreeType.union){
+                Union union = (Union)star.getChild();
+                union.eliminateEpsilon();
             }
-        }
-        if(filteredString.size() == 0)
-            return "";
-        result += filteredString.get(0);
-        for (int i = 1; i < filteredString.size(); i++) {
-            result += union + filteredString.get(i);
-        }
-        return result;
-    }
+            // Rule ()* ->
+            if(star.getChild().getType() == TreeType.empty)
+                return Tree.empty();
+            if(star.getChild().getType() == TreeType.epsilon)
+                return Tree.epsilon();
 
-    private String p(String p){
-        if(p.length() == 0)
-            return "";
-        return "(" + p + ")";
+        }
+        // Rule b U ((a*)b) -> (a*)b
+        if(tree.getType() == TreeType.union)
+        return tree;
     }
-
-     */
 }
 
