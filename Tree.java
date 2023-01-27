@@ -23,13 +23,19 @@ public abstract class Tree {
 
     @Override
     public boolean equals(Object obj){
-        if(obj.getClass() != Tree.class)
-            return false;
+
+        //if(obj instanceof Tree){
+        //    System.err.println("Wut?");
+        //    return false;
+        //}
+
         Tree tree = (Tree) obj;
+        return tree.toString().compareTo(this.toString()) == 0;
+        /*
         if(tree.getType() != this.getType())
             return false;
         if(tree.getType() == TreeType.literal)
-            return tree.toString().equals(this.toString());
+            return tree.toString().compareTo(this.toString()) == 0;
 
         if(tree.getNumChildren() != this.getNumChildren())
             return false;
@@ -39,6 +45,9 @@ public abstract class Tree {
                 return false;
         }
         return true;
+
+
+         */
     }
     public static boolean equals(Tree t1, Tree t2){
         return t1.equals(t2);

@@ -11,6 +11,9 @@ public class And extends Operations{
 
     private And() { }
 
+    public static Tree create(List<Tree> trees){
+        return create(trees.toArray(new Tree[0]));
+    }
     public static Tree create(Tree... trees){
         if(!filter(trees, inverse(TreeType.empty)).isEmpty())
             return Literal.empty();
@@ -20,13 +23,8 @@ public class And extends Operations{
         if(trees.length == 1)
             return trees[0];
 
-        Tree and = new Tree();
+        Tree and = new And();
         and.addChild(trees);
-        Tree and = new And(filter(trees, TreeType.and));
-        List<Tree> ands = filter(trees, inverse(TreeType.and));
-        for (int i = 0; i < ands.size(); i++) {
-            and.addChild(ands.get(i).getChildren());
-        }
         return and;
     }
 
@@ -34,7 +32,7 @@ public class And extends Operations{
     public Tree addChild(Tree... trees) {
         if(!filter(trees, inverse(TreeType.empty)).isEmpty())
             return Literal.empty();
-        add(TreeType.union, trees);
+        add(TreeType.and, trees);
         return this;
     }
 

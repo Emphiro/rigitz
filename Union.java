@@ -19,6 +19,8 @@ public class Union extends Operations {
         return union;
     }
 
+
+
     public static Tree create(List<Tree> trees){
         return create(trees.toArray(new Tree[0]));
     }

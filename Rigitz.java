@@ -44,6 +44,15 @@ public class Rigitz {
         rig.rigitz();
     }
 
+    private static void test(){
+        Rigitz rig = new Rigitz(statesS, startS, endsS, changesS);
+        System.out.println("//\nTest");
+        Tree t = Star.create(Union.create(Literal.create("a"), Tree.epsilon()));
+        System.out.println(t);
+        System.out.println(rig.optimize(t));
+        System.out.println("//");
+    }
+
     static ArrayList<String>[][] toArr(String[][][] arr){
         ArrayList<String>[][] result = new ArrayList[arr.length][arr[0].length];
         for (int i = 0; i < arr.length; i++) {
@@ -67,6 +76,7 @@ public class Rigitz {
     }
     private Tree rigitz(int k, int i, int j){
         Tree newRigitz = Literal.empty();
+        Tree optimizedRigitz = null;
         if(k == 0 && i == j){
             List<Tree> withE = new ArrayList<>(Literal.create(changes[i-1][i-1]));
             withE.add(Tree.epsilon());
@@ -85,6 +95,8 @@ public class Rigitz {
             if(showDepth)
                 depth++;
             newRigitz = calculateNewRigitz(k, i, j);
+            if(optimize)
+                optimizedRigitz = calculateNewOptimizedRigitz(k, i, j);
             if(showDepth)
                 depth--;
         }
@@ -95,8 +107,9 @@ public class Rigitz {
                 }
             }
             if(optimize){
-                Tree optimizedRigitz = optimize(newRigitz);
-                System.out.printf("R(%d, %d, %d) =  %s -> %s", k, i, j, newRigitz);
+                if(optimizedRigitz == null)
+                    optimizedRigitz = optimize(newRigitz);
+                System.out.printf("R(%d, %d, %d) =  %s", k, i, j, newRigitz);
                 if(!Tree.equals(optimizedRigitz, newRigitz))
                     System.out.printf(" -> %s", optimizedRigitz);
                 System.out.println();
@@ -107,7 +120,7 @@ public class Rigitz {
 
         }
         if(optimize)
-            return optimize(newRigitz);
+            return optimizedRigitz == null ? optimize(newRigitz) : optimizedRigitz;
         return newRigitz;
 
     }
@@ -130,6 +143,24 @@ public class Rigitz {
         }
         return Union.create(r1, And.create(r2, Star.create(r3), r4));
     }
+    private Tree calculateNewOptimizedRigitz(int k, int i, int j){
+        Tree r1;
+        Tree r2;
+        Tree r3;
+        Tree r4;
+        if(!dp) {
+            r1 = rigitz(k - 1, i, j);
+            r2 = rigitz(k - 1, i, k);
+            r3 = rigitz(k - 1, k, k);
+            r4 = rigitz(k - 1, k, j);
+        } else {
+            r1 = calculateDP(k-1, i, j);
+            r2 = calculateDP(k-1, i, k);
+            r3 = calculateDP(k-1, k, k);
+            r4 = calculateDP(k-1, k, j);
+        }
+        return optimize(Union.create(r1, optimize(And.create(r2, optimize(Star.create(r3)), r4))));
+    }
 
     private Tree calculateDP(int k, int i, int j){
         if(dpArray[k][i-1][j-1] == null){
@@ -148,13 +179,24 @@ public class Rigitz {
     }
 
     private Tree optimize(Tree tree){
+        Tree prev = tree;
+        Tree opt = optimizeOnce(tree);
+        while(!Tree.equals(prev, opt)){
+            prev = opt;
+            opt = optimizeOnce(opt);
+        }
+        return opt;
+    }
+    private Tree optimizeOnce(Tree tree){
 
         if(tree.getType() == TreeType.star){
+            //System.out.println("opt: found star");
             Star star = (Star)tree;
             // Rule (a U e)* -> a*
             if(star.getChild().getType() == TreeType.union){
+                //System.out.println("opt: removing epsilons");
                 Union union = (Union)star.getChild();
-                union.eliminateEpsilon();
+                return Star.create(union.eliminateEpsilon());
             }
             // Rule ()* ->
             if(star.getChild().getType() == TreeType.empty)
@@ -163,8 +205,41 @@ public class Rigitz {
                 return Tree.epsilon();
 
         }
+        // Rule (a U e)a* -> a*
+        if(tree.getType() == TreeType.and){
+            And and = (And)tree;
+            if(tree.getNumChildren() >= 2 && tree.getChildren().get(0).getType() == TreeType.union && tree.getChildren().get(1).getType() == TreeType.star){
+                Union union = (Union)tree.getChildren().get(0);
+                Star star = (Star)tree.getChildren().get(1);
+                Tree a = star.getChild();
+                if(union.getNumChildren() == 2){
+                    if(union.getChildren().get(0) == Tree.epsilon()){
+                        if(Tree.equals(union.getChildren().get(1), a)){
+                            return and.removeChild(0);
+                        }
+                    }
+                    if(union.getChildren().get(1) == Tree.epsilon()){
+                        if(Tree.equals(union.getChildren().get(0), a)){
+                            return and.removeChild(0);
+                        }
+                    }
+                }
+            }
+        }
         // Rule b U ((a*)b) -> (a*)b
-        if(tree.getType() == TreeType.union)
+        if(tree.getType() == TreeType.union){
+            for (int i = 1; i < tree.getNumChildren(); i++) {
+                if(tree.getChildren().get(i).getType() == TreeType.and){
+                    And and = (And)tree.getChildren().get(i);
+                    if(and.getChildren().get(0).getType() == TreeType.star){
+                        Star star = (Star)and.getChildren().get(0);
+                        Tree b = And.create(and.getChildren().subList(1, and.getNumChildren()));
+                        if(Tree.equals(b, tree.getChildren().get(i-1)))
+                            return ((Union)tree).removeChild(i-1);
+                    }
+                }
+            }
+        }
         return tree;
     }
 }

@@ -7,6 +7,12 @@ public abstract class Operations extends Tree{
     protected List<Tree> children = new ArrayList<>();
 
 
+    public Tree removeChild(int i){
+        children.remove(i);
+        if(children.size() == 1)
+            return children.get(0);
+        return this;
+    }
 
 
 
