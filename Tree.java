@@ -23,13 +23,19 @@ public abstract class Tree {
 
     @Override
     public boolean equals(Object obj){
-        if(obj.getClass() != Tree.class)
-            return false;
+
+        //if(obj instanceof Tree){
+        //    System.err.println("Wut?");
+        //    return false;
+        //}
+
         Tree tree = (Tree) obj;
+        return tree.toString().compareTo(this.toString()) == 0;
+        /*
         if(tree.getType() != this.getType())
             return false;
         if(tree.getType() == TreeType.literal)
-            return tree.toString().equals(this.toString());
+            return tree.toString().compareTo(this.toString()) == 0;
 
         if(tree.getNumChildren() != this.getNumChildren())
             return false;
@@ -39,6 +45,9 @@ public abstract class Tree {
                 return false;
         }
         return true;
+
+
+         */
     }
     public static boolean equals(Tree t1, Tree t2){
         return t1.equals(t2);
@@ -49,6 +58,13 @@ public abstract class Tree {
     }
 
     public abstract TreeType getType();
+
+    /**
+     * returns a copy of the unfiltered List without Elements that are of the Types specified in filter
+     * @param unfiltered unfiltered Array
+     * @param filter filtered TreeTypes
+     * @return filtered List
+     */
     public static List<Tree> filter(Tree[] unfiltered, TreeType... filter){
         List<Tree> filtered = new ArrayList<>();
         outer: for (Tree tree : unfiltered){
@@ -60,14 +76,31 @@ public abstract class Tree {
         }
         return filtered;
     }
+
+    /**
+     * returns a copy of the unfiltered List without Elements that are of the Types specified in filter
+     * @param unfiltered unfiltered List
+     * @param filter filtered TreeTypes
+     * @return filtered List
+     */
     public static List<Tree> filter(List<Tree> unfiltered, TreeType... filter){
         return filter(unfiltered.toArray(new Tree[0]), filter);
     }
 
+    /**
+     * Returns an array containing all the TreeTypes not specified in type
+     * @param type Array of Types
+     * @return difference of TreeTypes and type
+     */
     public static TreeType[] inverse(TreeType... type){
         return inverse(Arrays.asList(type));
     }
 
+    /**
+     * Returns an array containing all the TreeTypes not specified in type
+     * @param type List of Types
+     * @return difference of TreeTypes and type
+     */
     public static TreeType[] inverse(List<TreeType> type){
         ArrayList<TreeType> result = new ArrayList<>();
         for (TreeType t : TreeType.values() ){

@@ -23,6 +23,10 @@ public class Star extends Tree {
         return result;
     }
 
+    public Tree getChild(){
+        return child;
+    }
+
     @Override
     public int getNumChildren() {
         return 1;

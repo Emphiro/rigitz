@@ -9,6 +9,11 @@ public class And extends Operations{
         this.addChild(trees);
     }
 
+    private And() { }
+
+    public static Tree create(List<Tree> trees){
+        return create(trees.toArray(new Tree[0]));
+    }
     public static Tree create(Tree... trees){
         if(!filter(trees, inverse(TreeType.empty)).isEmpty())
             return Literal.empty();
@@ -17,11 +22,9 @@ public class And extends Operations{
             return Literal.empty();
         if(trees.length == 1)
             return trees[0];
-        Tree and = new And(filter(trees, TreeType.and));
-        List<Tree> ands = filter(trees, inverse(TreeType.and));
-        for (int i = 0; i < ands.size(); i++) {
-            and.addChild(ands.get(i).getChildren());
-        }
+
+        Tree and = new And();
+        and.addChild(trees);
         return and;
     }
 
@@ -29,14 +32,7 @@ public class And extends Operations{
     public Tree addChild(Tree... trees) {
         if(!filter(trees, inverse(TreeType.empty)).isEmpty())
             return Literal.empty();
-        List<Tree> fTrees = filter(trees, TreeType.and);
-        for (Tree t : fTrees){
-            children.add(t);
-        }
-        List<Tree> ands = filter(trees, inverse(TreeType.and));
-        for (int i = 0; i < ands.size(); i++) {
-            this.addChild(ands.get(i).getChildren());
-        }
+        add(TreeType.and, trees);
         return this;
     }
 

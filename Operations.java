@@ -7,6 +7,12 @@ public abstract class Operations extends Tree{
     protected List<Tree> children = new ArrayList<>();
 
 
+    public Tree removeChild(int i){
+        children.remove(i);
+        if(children.size() == 1)
+            return children.get(0);
+        return this;
+    }
 
 
 
@@ -31,5 +37,20 @@ public abstract class Operations extends Tree{
         }
         sb.append(")");
         return sb.toString();
+    }
+
+    public Tree add(TreeType tt, List<Tree> trees){
+        return add(tt, trees.toArray(new Tree[0]));
+    }
+    public Tree add(TreeType tt, Tree... trees){
+        for (int i = 0; i < trees.length; i++) {
+            if(trees[i].getType() == tt){
+                for (Tree t : trees[i].getChildren())
+                    children.add(t);
+            }else{
+                children.add(trees[i]);
+            }
+        }
+        return this;
     }
 }
