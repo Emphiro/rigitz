@@ -168,12 +168,12 @@ public class Rigitz {
             return dpArray[k][i-1][j-1];
         }
         if(verbose){
-            if(showDepth){
-                for (int l = 0; l < depth+1; l++) {
-                    System.out.print("  ");
-                }
-            }
-            System.out.printf("Used R(%d, %d, %d): %s\n", k, i, j, dpArray[k][i-1][j-1]);
+            //if(showDepth){
+            //    for (int l = 0; l < depth+1; l++) {
+            //        System.out.print("  ");
+            //    }
+            //}
+            //System.out.printf("Used R(%d, %d, %d): %s\n", k, i, j, dpArray[k][i-1][j-1]);
         }
         return  dpArray[k][i-1][j-1];
     }
@@ -226,20 +226,29 @@ public class Rigitz {
                 }
             }
         }
-        // Rule b U ((a*)b) -> (a*)b
+
         if(tree.getType() == TreeType.union){
             for (int i = 1; i < tree.getNumChildren(); i++) {
                 if(tree.getChildren().get(i).getType() == TreeType.and){
                     And and = (And)tree.getChildren().get(i);
+                    // Rule b U ((a*)b) -> (a*)b
                     if(and.getChildren().get(0).getType() == TreeType.star){
                         Star star = (Star)and.getChildren().get(0);
                         Tree b = And.create(and.getChildren().subList(1, and.getNumChildren()));
                         if(Tree.equals(b, tree.getChildren().get(i-1)))
                             return ((Union)tree).removeChild(i-1);
                     }
+                    // Rule b U (b)a* -> b(a*)
+                    if(and.getChildren().get(and.getNumChildren()-1).getType() == TreeType.star){
+                        Star star = (Star)and.getChildren().get(and.getNumChildren()-1);
+                        Tree b = And.create(and.getChildren().subList(0, and.getNumChildren()-1));
+                        if(Tree.equals(b, tree.getChildren().get(i-1)))
+                            return ((Union)tree).removeChild(i-1);
+                    }
                 }
             }
         }
+
         return tree;
     }
 }
